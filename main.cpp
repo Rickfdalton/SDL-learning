@@ -2,24 +2,44 @@
 #include <SDL2/SDL.h>
 using namespace std;
 
-bool init();
-bool loadMedia(char* path);
-void close();
+
 
 const int WINDOW_WIDTH = 800;
 const int WINDOW_HEIGHT = 600;
 
+enum KeyPressSurfaces{
+    KEY_PRESS_SURFACE_DEFAULT,
+    KEY_PRESS_SURFACE_UP,
+    KEY_PRESS_SURFACE_DOWN,
+    KEY_PRESS_SURFACE_LEFT,
+    KEY_PRESS_SURFACE_RIGHT,
+    KEY_PRESS_SURFACE_TOTAL
+};
 SDL_Window* gWindow = NULL;
 SDL_Surface* gScreenSurface = NULL;
 SDL_Surface* gImage = NULL;
+SDL_Surface* gKeyPressSurfaces[ KEY_PRESS_SURFACE_TOTAL ];
+SDL_Surface* gCurrentSurface = NULL;
 
+bool init();
+bool loadMedia(string* images_array);
+void close();
+SDL_Surface* loadSurface(string path); 
 
 int main (int argc, char* argv[]) {
     if (!init()){
         cout << "Failed to initialize! " << endl;
     }else{
-        char path[] = "/Users/jathavanmahendrarajah/Desktop/learn-SDL/sample.bmp";
-        if (!loadMedia(path)){
+        string image_up = "/Users/jathavanmahendrarajah/Desktop/learn-SDL/images/up.bmp";
+        string image_down = "/Users/jathavanmahendrarajah/Desktop/learn-SDL/images/down.bmp";
+        string image_left = "/Users/jathavanmahendrarajah/Desktop/learn-SDL/images/left.bmp";
+        string image_right = "/Users/jathavanmahendrarajah/Desktop/learn-SDL/images/right.bmp";
+        string image_press = "/Users/jathavanmahendrarajah/Desktop/learn-SDL/images/press.bmp";
+
+        string images[5] = {image_up,image_down,image_left,image_right,image_press};
+
+
+        if (!loadMedia(images) ){
             cout << "Failed to load media " <<endl;
         } else{
             // load image to screen
@@ -29,11 +49,42 @@ int main (int argc, char* argv[]) {
             //this makes the window stays up
             SDL_Event e;
             bool quit = false;
-            while (quit == false){
+            gCurrentSurface = gKeyPressSurfaces[KEY_PRESS_SURFACE_DEFAULT];
+            while (!quit){
                 while (SDL_PollEvent(&e)){
                     if (e.type == SDL_QUIT) {quit = true;}
+                    else if (e.type == SDL_KEYDOWN)
+                    {
+                        switch(e.key.keysym.sym){
+                            case SDLK_UP:
+                                gCurrentSurface = gKeyPressSurfaces[KEY_PRESS_SURFACE_UP];
+                                break;
+                            case SDLK_DOWN:
+                                gCurrentSurface = gKeyPressSurfaces[KEY_PRESS_SURFACE_DOWN];
+                                break;
+                            case SDLK_LEFT:
+                                gCurrentSurface = gKeyPressSurfaces[KEY_PRESS_SURFACE_LEFT];
+                                break;
+                            case SDLK_RIGHT:
+                                gCurrentSurface = gKeyPressSurfaces[KEY_PRESS_SURFACE_RIGHT];
+                                break;
+                            default:
+                                gCurrentSurface = gKeyPressSurfaces[KEY_PRESS_SURFACE_DEFAULT];
+                                break;
+
+                        }
+
+                           //Apply the current image
+                            SDL_BlitSurface( gCurrentSurface, NULL, gScreenSurface, NULL );
+                            //Update the surface
+                            SDL_UpdateWindowSurface( gWindow );
+
+                    }
+                    
                 }
             }
+            close();
+
         }
     }
     return 0;
@@ -59,16 +110,49 @@ bool init(){
     return success;
 }
 
-// function to load image
-bool loadMedia(char* path){
+bool loadMedia(string* images_array){
     bool success = true;
-    //load image
-    gImage = SDL_LoadBMP(path);
-    if (gImage == NULL){
-        cout << "Image load failed due to error :" << SDL_GetError() << endl;
+    // load up surface
+    gKeyPressSurfaces[KEY_PRESS_SURFACE_UP] = loadSurface(images_array[0].c_str());
+    if (!gKeyPressSurfaces[KEY_PRESS_SURFACE_UP] ){
+        cout << "failed to load up image" << endl;
+        success = false;
+    }
+    // load down surface
+    gKeyPressSurfaces[KEY_PRESS_SURFACE_DOWN] = loadSurface(images_array[1].c_str());
+    if (!gKeyPressSurfaces[KEY_PRESS_SURFACE_DOWN] ){
+        cout << "failed to load down image" << endl;
+        success = false;
+    }
+    // load left surface
+    gKeyPressSurfaces[KEY_PRESS_SURFACE_LEFT] = loadSurface(images_array[2].c_str());
+    if (!gKeyPressSurfaces[KEY_PRESS_SURFACE_LEFT] ){
+        cout << "failed to load left image" << endl;
+        success = false;
+    }
+    // load right surface
+    gKeyPressSurfaces[KEY_PRESS_SURFACE_RIGHT] = loadSurface(images_array[3].c_str());
+    if (!gKeyPressSurfaces[KEY_PRESS_SURFACE_RIGHT] ){
+        cout << "failed to load right image" << endl;
+        success = false;
+    }
+    // load default surface
+    gKeyPressSurfaces[KEY_PRESS_SURFACE_DEFAULT] = loadSurface(images_array[4].c_str());
+    if (!gKeyPressSurfaces[KEY_PRESS_SURFACE_DEFAULT] ){
+        cout << "failed to load default image" << endl;
         success = false;
     }
     return success;
+}
+
+// load individual surfaces 
+SDL_Surface* loadSurface(string path){
+    SDL_Surface* surface = SDL_LoadBMP(path.c_str());
+    if (!surface){
+        cout << "Failed to load image : "<< path << endl;
+        cout << SDL_GetError() << endl;
+    }
+    return surface;
 }
 
 //close
