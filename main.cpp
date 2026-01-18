@@ -74,8 +74,14 @@ int main (int argc, char* argv[]) {
 
                         }
 
-                           //Apply the current image
-                            SDL_BlitSurface( gCurrentSurface, NULL, gScreenSurface, NULL );
+                           //Apply the current image, but streched
+                            SDL_Rect stretchRect;
+                            stretchRect.x =0;
+                            stretchRect.y =0;
+                            stretchRect.w = WINDOW_WIDTH;
+                            stretchRect.h = WINDOW_HEIGHT;
+
+                            SDL_BlitScaled( gCurrentSurface, NULL, gScreenSurface, &stretchRect );
                             //Update the surface
                             SDL_UpdateWindowSurface( gWindow );
 
@@ -148,11 +154,19 @@ bool loadMedia(string* images_array){
 // load individual surfaces 
 SDL_Surface* loadSurface(string path){
     SDL_Surface* surface = SDL_LoadBMP(path.c_str());
+    SDL_Surface* optimized_surface = NULL;
     if (!surface){
         cout << "Failed to load image : "<< path << endl;
         cout << SDL_GetError() << endl;
+    }else{
+        //optimize surface
+        optimized_surface = SDL_ConvertSurface(surface,gScreenSurface->format, 0);
+        if (optimized_surface == NULL){
+            cout << "Error during image optimization: " << SDL_GetError() << endl;
+        }
+        SDL_FreeSurface(surface);
     }
-    return surface;
+    return optimized_surface;
 }
 
 //close
