@@ -136,21 +136,12 @@ SDL_Surface* loadSurface(string path){
 
 SDL_Texture* loadTexture(string path){
     SDL_Texture* newTexture = NULL;
-    SDL_Surface* loadedSurface = IMG_Load(path.c_str());
-    if (loadedSurface == NULL){
-        cout << "unable to load image" << endl;
-        cout << SDL_GetError() << endl;
-    }else{
-        //create texture from surface
-        newTexture = SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
-        if (newTexture == NULL) {
-            cout << "cannot create texture from surface" << endl;
-            cout << SDL_GetError() << endl;
-        }
-        SDL_FreeSurface(loadedSurface);
+    newTexture = IMG_LoadTexture(gRenderer,path.c_str());
+    if (newTexture == NULL){
+        cout << "unable to load texture" << endl;
+        cout << IMG_GetError() << endl;
     }
     return newTexture;
-
 }
 
 //close
