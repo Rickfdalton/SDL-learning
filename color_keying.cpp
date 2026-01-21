@@ -1,6 +1,7 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <cmath>
 
 /**
  * color keying is treating a specific color in an image as transparent
@@ -163,7 +164,10 @@ int main (int argc, char* argv[]) {
             //this makes the window stays up
             SDL_Event e;
             bool quit = false;
+            Uint32 startTime = SDL_GetTicks();
             while (!quit){
+                float seconds = (SDL_GetTicks() - startTime) / 1000.0f;
+
                 while (SDL_PollEvent(&e)){
                     if (e.type == SDL_QUIT) {quit = true;}  
                 }
@@ -171,7 +175,7 @@ int main (int argc, char* argv[]) {
                 SDL_RenderClear(gRenderer);
 
                 gBackTexture.render(0,0);
-                gFooTexture.render(200,100);
+                gFooTexture.render(200 * sin(seconds),100 * sin(seconds));
 
                 SDL_RenderPresent(gRenderer);
             }
