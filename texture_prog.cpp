@@ -35,12 +35,33 @@ int main (int argc, char* argv[]) {
             while (!quit){
                 while (SDL_PollEvent(&e)){
                     if (e.type == SDL_QUIT) {quit = true;}
+                    //set view port
+                    SDL_Rect top_left_viewport = {0,0,WINDOW_WIDTH/2, WINDOW_HEIGHT/2};
+                    SDL_Rect top_right_viewport = {WINDOW_WIDTH/2,0,WINDOW_WIDTH/2, WINDOW_HEIGHT/2};
+                    SDL_Rect bottom_half = {0,WINDOW_HEIGHT/2,WINDOW_WIDTH, WINDOW_HEIGHT/2};
+
+                    SDL_RenderSetViewport(gRenderer,&top_right_viewport);
+
                     //Clear screen
                     SDL_RenderClear( gRenderer );
                     //Render texture to screen
                     SDL_RenderCopy( gRenderer, gTexture, NULL, NULL );
+                    
+                    SDL_RenderSetViewport(gRenderer,&top_left_viewport);
+                    SDL_RenderCopy( gRenderer, gTexture, NULL, NULL );
+
+                    SDL_RenderSetViewport(gRenderer,&top_left_viewport);
+                    SDL_RenderCopy( gRenderer, gTexture, NULL, NULL );
+
+                    SDL_RenderSetViewport(gRenderer,&bottom_half);
+                    SDL_RenderCopy( gRenderer, gTexture, NULL, NULL );
+
+
                     //Update screen
                     SDL_RenderPresent( gRenderer );
+
+
+
                     
                 }
             }
@@ -72,7 +93,7 @@ bool init(){
                 cout << SDL_GetError() << endl;
             } else{
                 //initialize renderer color
-                SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+                SDL_SetRenderDrawColor( gRenderer, 0, 0, 0, 0);
 
                 //initialize PNG loading
                 int imgFlags = IMG_INIT_PNG;

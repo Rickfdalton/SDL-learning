@@ -31,6 +31,7 @@ int main (int argc, char* argv[]) {
             while (!quit){
                 while (SDL_PollEvent(&e)){
                     if (e.type == SDL_QUIT) {quit = true;}
+
                     //clear screen
                     SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
                     SDL_RenderClear(gRenderer); 
