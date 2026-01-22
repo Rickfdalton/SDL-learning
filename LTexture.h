@@ -15,6 +15,8 @@ public:
     void render(int x, int y, SDL_Rect* clip );
     int get_width(){return m_width;}
     int get_height(){return m_height;}
+    void setColor( Uint8 red, Uint8 green, Uint8 blue );
+
 private:
     SDL_Texture* m_texture;
     int m_width;

@@ -82,6 +82,10 @@ void LTexture::render(int x, int y, SDL_Rect* clip = NULL){
 
 }
 
+void LTexture::setColor( Uint8 red, Uint8 green, Uint8 blue ){
+    SDL_SetTextureColorMod( m_texture, red, green, blue );
+}
+
 /*
 load 2  LTextures for 2 images
 */
@@ -190,18 +194,58 @@ int main (int argc, char* argv[]) {
             //this makes the window stays up
             SDL_Event e;
             bool quit = false;
-            Uint32 startTime = SDL_GetTicks();
+            // Uint32 startTime = SDL_GetTicks();
+            
+            //Modulation components
+            Uint8 r = 255;
+            Uint8 g = 255;
+            Uint8 b = 255;
+
             while (!quit){
                 // float seconds = (SDL_GetTicks() - startTime) / 1000.0f;
 
                 while (SDL_PollEvent(&e)){
                     if (e.type == SDL_QUIT) {quit = true;}  
+                    else if (e.type == SDL_KEYDOWN){
+                        switch( e.key.keysym.sym ){
+                             //Increase red
+                            case SDLK_q:
+                            r += 16;
+                            break;
+
+                             //Decrease red
+                            case SDLK_a:
+                            r -= 16;
+                            break;
+
+                             //Increase blue
+                            case SDLK_w:
+                            b += 16;
+                            break;
+
+                             //Decrease blue
+                            case SDLK_s:
+                            b -= 16;
+                            break;
+
+                              //Increase green
+                            case SDLK_e:
+                            g += 16;
+                            break;
+
+                             //Decrease green
+                            case SDLK_d:
+                            g -= 16;
+                            break;
+                        }
+                    }
                 }
                 SDL_SetRenderDrawColor(gRenderer,0xFF,0xFF,0xFF,0xFF);
                 SDL_RenderClear(gRenderer);
 
                 // gBackTexture.render(0,0);
                 // gFooTexture.render(200 * sin(seconds),100 * sin(seconds));
+                gSheetTexture.setColor(r,g,b);
                 gSheetTexture.render(0,0,&gSpriteClips[0]);
                 gSheetTexture.render(300,0,&gSpriteClips[1]);
                 gSheetTexture.render(0,300,&gSpriteClips[2]);
