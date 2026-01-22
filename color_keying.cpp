@@ -9,7 +9,7 @@
 
 #include "LTexture.h"
 
-const int WINDOW_WIDTH = 800;
+const int WINDOW_WIDTH = 400;
 const int WINDOW_HEIGHT = 400;
 
 bool load_media();
@@ -19,6 +19,8 @@ bool init();
 SDL_Window* gWindow = NULL;
 LTexture gFooTexture; //front texture
 LTexture gBackTexture; //bg texture
+LTexture gSheetTexture; //sprite sheet texture
+SDL_Rect gSpriteClips[4];
 SDL_Renderer* gRenderer = NULL;
 
 
@@ -68,10 +70,15 @@ void LTexture::free() {
     }
 }
 
-void LTexture::render(int x, int y){
+void LTexture::render(int x, int y, SDL_Rect* clip = NULL){
     SDL_Rect render_quad= {x,y,m_width,m_height};
+    if(clip){
+        render_quad.w =clip->w;
+        render_quad.h =clip->h;
+
+    }
     SDL_GetRendererOutputSize(gRenderer, &x, &y);
-    SDL_RenderCopy( gRenderer, m_texture, NULL, &render_quad );
+    SDL_RenderCopy( gRenderer, m_texture, clip, &render_quad );
 
 }
 
@@ -81,14 +88,32 @@ load 2  LTextures for 2 images
 bool load_media(){
     bool success = true;
     
-    if (!gFooTexture.load_from_file("images/Group 1.png")){
+    if (!gSheetTexture.load_from_file("images/dots.png")){
         cout<< "failed to load foo" <<endl;
         success=false;
+    }else{
+        gSpriteClips[0].x=0;
+        gSpriteClips[0].y=0;
+        gSpriteClips[0].h=100;
+        gSpriteClips[0].w=100;
+
+        gSpriteClips[1].x=100;
+        gSpriteClips[1].y=0;
+        gSpriteClips[1].h=100;
+        gSpriteClips[1].w=100;
+
+        gSpriteClips[2].x=0;
+        gSpriteClips[2].y=100;
+        gSpriteClips[2].h=100;
+        gSpriteClips[2].w=100;
+
+        gSpriteClips[3].x=100;
+        gSpriteClips[3].y=100;
+        gSpriteClips[3].h=100;
+        gSpriteClips[3].w=100;
+
     }
-    if (!gBackTexture.load_from_file("images/bg.png")){
-        cout<< "failed to load bg" <<endl;
-        success=false;
-    }
+    
     return success;
 }
 
@@ -97,8 +122,9 @@ de allocators
 */
 
 void close(){
-    gFooTexture.free();
-    gBackTexture.free();
+    // gFooTexture.free();
+    // gBackTexture.free();
+    gSheetTexture.free();
 
     SDL_DestroyRenderer(gRenderer);
     SDL_DestroyWindow(gWindow);
@@ -166,7 +192,7 @@ int main (int argc, char* argv[]) {
             bool quit = false;
             Uint32 startTime = SDL_GetTicks();
             while (!quit){
-                float seconds = (SDL_GetTicks() - startTime) / 1000.0f;
+                // float seconds = (SDL_GetTicks() - startTime) / 1000.0f;
 
                 while (SDL_PollEvent(&e)){
                     if (e.type == SDL_QUIT) {quit = true;}  
@@ -174,8 +200,12 @@ int main (int argc, char* argv[]) {
                 SDL_SetRenderDrawColor(gRenderer,0xFF,0xFF,0xFF,0xFF);
                 SDL_RenderClear(gRenderer);
 
-                gBackTexture.render(0,0);
-                gFooTexture.render(200 * sin(seconds),100 * sin(seconds));
+                // gBackTexture.render(0,0);
+                // gFooTexture.render(200 * sin(seconds),100 * sin(seconds));
+                gSheetTexture.render(0,0,&gSpriteClips[0]);
+                gSheetTexture.render(300,0,&gSpriteClips[1]);
+                gSheetTexture.render(0,300,&gSpriteClips[2]);
+                gSheetTexture.render(300,300,&gSpriteClips[3]);
 
                 SDL_RenderPresent(gRenderer);
             }

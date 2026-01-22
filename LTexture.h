@@ -12,7 +12,7 @@ public:
     ~LTexture();
     bool load_from_file(string path);
     void free();
-    void render(int x, int y);
+    void render(int x, int y, SDL_Rect* clip );
     int get_width(){return m_width;}
     int get_height(){return m_height;}
 private:
