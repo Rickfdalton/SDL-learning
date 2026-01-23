@@ -18,6 +18,7 @@ public:
     void setColor( Uint8 red, Uint8 green, Uint8 blue );
     void setAlpha(Uint8 alpha);
     void setBlendMode(SDL_BlendMode blending);
+    SDL_Texture* getTexture(){return m_texture;};
 
 private:
     SDL_Texture* m_texture;
