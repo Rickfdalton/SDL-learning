@@ -29,3 +29,7 @@ gSheetTexture.render(0, 0, current_clip);
 
 
 
+
+https://github.com/user-attachments/assets/684c37d7-d195-4b62-8c53-67a21467c13f
+
+Yeah!, i get it, im not an animator. but you are a cool animator :P 
