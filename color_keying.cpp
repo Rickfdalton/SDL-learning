@@ -86,6 +86,13 @@ void LTexture::setColor( Uint8 red, Uint8 green, Uint8 blue ){
     SDL_SetTextureColorMod( m_texture, red, green, blue );
 }
 
+void LTexture::setBlendMode(SDL_BlendMode mode){
+    SDL_SetTextureBlendMode(m_texture,mode);
+}
+
+void LTexture::setAlpha(Uint8 alpha){
+    SDL_SetTextureAlphaMod(m_texture, alpha);
+}
 /*
 load 2  LTextures for 2 images
 */
@@ -115,6 +122,9 @@ bool load_media(){
         gSpriteClips[3].y=100;
         gSpriteClips[3].h=100;
         gSpriteClips[3].w=100;
+
+        //set alpha blending
+        gSheetTexture.setBlendMode(SDL_BLENDMODE_BLEND);
 
     }
     
@@ -201,6 +211,9 @@ int main (int argc, char* argv[]) {
             Uint8 g = 255;
             Uint8 b = 255;
 
+            //alpha
+            Uint8 a = 255;
+
             while (!quit){
                 // float seconds = (SDL_GetTicks() - startTime) / 1000.0f;
 
@@ -210,38 +223,81 @@ int main (int argc, char* argv[]) {
                         switch( e.key.keysym.sym ){
                              //Increase red
                             case SDLK_q:
+                            if(r>238){
+                                r=255;
+                                break;
+                            }
                             r += 16;
                             break;
 
                              //Decrease red
                             case SDLK_a:
+                            if(r<17){
+                                r=0;
+                                break;
+                            }
                             r -= 16;
                             break;
 
                              //Increase blue
                             case SDLK_w:
+                            if(b>238){
+                                b=255;
+                                break;
+                            }
                             b += 16;
                             break;
 
                              //Decrease blue
                             case SDLK_s:
+                            if(b<17){
+                                b=0;
+                                break;
+                            }
                             b -= 16;
                             break;
 
                               //Increase green
                             case SDLK_e:
+                            if(g>238){
+                                g=255;
+                                break;
+                            }
                             g += 16;
                             break;
 
                              //Decrease green
                             case SDLK_d:
+                            if(g<17){
+                                g=0;
+                                break;
+                            }
                             g -= 16;
+                            break;
+
+                            //Increase alpha
+                            case SDLK_o:
+                            if(a>238){
+                                a=255;
+                                break;
+                            }
+                            a+=16;
+                            break;
+
+                            //Decrease alpha
+                            case SDLK_p:
+                             if(a<17){
+                                a=0;
+                                break;
+                            }
+                            a-=16;
                             break;
                         }
                     }
                 }
                 SDL_SetRenderDrawColor(gRenderer,0xFF,0xFF,0xFF,0xFF);
                 SDL_RenderClear(gRenderer);
+
 
                 // gBackTexture.render(0,0);
                 // gFooTexture.render(200 * sin(seconds),100 * sin(seconds));
@@ -250,6 +306,8 @@ int main (int argc, char* argv[]) {
                 gSheetTexture.render(300,0,&gSpriteClips[1]);
                 gSheetTexture.render(0,300,&gSpriteClips[2]);
                 gSheetTexture.render(300,300,&gSpriteClips[3]);
+
+                gSheetTexture.setAlpha(a);
 
                 SDL_RenderPresent(gRenderer);
             }
